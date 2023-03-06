@@ -7,7 +7,7 @@ using TypeRunnerBE.Utilities;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddDbContext<TypeMarathonContext>(opt =>
+builder.Services.AddDbContext<TypeRunnerContext>(opt =>
 {
     var connectionString =
             new ConfigurationBuilder()
@@ -39,7 +39,7 @@ if (app.Environment.IsDevelopment())
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    var context = services.GetRequiredService<TypeMarathonContext>();
+    var context = services.GetRequiredService<TypeRunnerContext>();
     await DbInitializer.Initialize(context);
 }
 

@@ -10,7 +10,7 @@ using TypeRunnerBE.Models;
 
 namespace TypeRunnerBE.Migrations
 {
-    [DbContext(typeof(TypeMarathonContext))]
+    [DbContext(typeof(TypeRunnerContext))]
     partial class TypeMarathonContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
@@ -22,7 +22,7 @@ namespace TypeRunnerBE.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("TypeMarathonBE.Models.Author", b =>
+            modelBuilder.Entity("TypeRunnerBE.Models.Passage", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -30,24 +30,7 @@ namespace TypeRunnerBE.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Authors");
-                });
-
-            modelBuilder.Entity("TypeMarathonBE.Models.Quote", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AuthorId")
+                    b.Property<int>("SourceId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Text")
@@ -56,12 +39,12 @@ namespace TypeRunnerBE.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AuthorId");
+                    b.HasIndex("SourceId");
 
-                    b.ToTable("Quotes");
+                    b.ToTable("Passages");
                 });
 
-            modelBuilder.Entity("TypeMarathonBE.Models.Race", b =>
+            modelBuilder.Entity("TypeRunnerBE.Models.Race", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -75,26 +58,49 @@ namespace TypeRunnerBE.Migrations
                     b.Property<DateTime?>("EndTime")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("QuoteId")
+                    b.Property<int>("PassageId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("StartTime")
+                    b.Property<DateTime?>("StartTime")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("QuoteId");
+                    b.HasIndex("PassageId");
 
                     b.ToTable("Races");
                 });
 
-            modelBuilder.Entity("TypeMarathonBE.Models.User", b =>
+            modelBuilder.Entity("TypeRunnerBE.Models.Source", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Sources");
+                });
+
+            modelBuilder.Entity("TypeRunnerBE.Models.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AverageWpm")
+                        .HasColumnType("integer");
 
                     b.Property<int?>("CurrentRaceId")
                         .HasColumnType("integer");
@@ -117,7 +123,7 @@ namespace TypeRunnerBE.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("TypeMarathonBE.Models.UserFriend", b =>
+            modelBuilder.Entity("TypeRunnerBE.Models.UserFriend", b =>
                 {
                     b.Property<int>("FromUserId")
                         .HasColumnType("integer");
@@ -132,7 +138,7 @@ namespace TypeRunnerBE.Migrations
                     b.ToTable("UserFriends", (string)null);
                 });
 
-            modelBuilder.Entity("TypeMarathonBE.Models.UserRaceMistake", b =>
+            modelBuilder.Entity("TypeRunnerBE.Models.UserRaceMistake", b =>
                 {
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
@@ -143,12 +149,15 @@ namespace TypeRunnerBE.Migrations
                     b.Property<string>("Word")
                         .HasColumnType("text");
 
+                    b.Property<int>("NumberOfTimes")
+                        .HasColumnType("integer");
+
                     b.HasKey("UserId", "RaceId", "Word");
 
-                    b.ToTable("UserRaceMistake");
+                    b.ToTable("UserRaceMistakes");
                 });
 
-            modelBuilder.Entity("TypeMarathonBE.Models.UserRaceRecord", b =>
+            modelBuilder.Entity("TypeRunnerBE.Models.UserRaceRecord", b =>
                 {
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
@@ -166,46 +175,46 @@ namespace TypeRunnerBE.Migrations
                     b.ToTable("UserRaceRecords");
                 });
 
-            modelBuilder.Entity("TypeMarathonBE.Models.Quote", b =>
+            modelBuilder.Entity("TypeRunnerBE.Models.Passage", b =>
                 {
-                    b.HasOne("TypeMarathonBE.Models.Author", "Author")
-                        .WithMany("Quotes")
-                        .HasForeignKey("AuthorId")
+                    b.HasOne("TypeRunnerBE.Models.Source", "Source")
+                        .WithMany("Passages")
+                        .HasForeignKey("SourceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Author");
+                    b.Navigation("Source");
                 });
 
-            modelBuilder.Entity("TypeMarathonBE.Models.Race", b =>
+            modelBuilder.Entity("TypeRunnerBE.Models.Race", b =>
                 {
-                    b.HasOne("TypeMarathonBE.Models.Quote", "Quote")
+                    b.HasOne("TypeRunnerBE.Models.Passage", "Passage")
                         .WithMany()
-                        .HasForeignKey("QuoteId")
+                        .HasForeignKey("PassageId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Quote");
+                    b.Navigation("Passage");
                 });
 
-            modelBuilder.Entity("TypeMarathonBE.Models.User", b =>
+            modelBuilder.Entity("TypeRunnerBE.Models.User", b =>
                 {
-                    b.HasOne("TypeMarathonBE.Models.Race", "CurrentRace")
+                    b.HasOne("TypeRunnerBE.Models.Race", "CurrentRace")
                         .WithMany("Racers")
                         .HasForeignKey("CurrentRaceId");
 
                     b.Navigation("CurrentRace");
                 });
 
-            modelBuilder.Entity("TypeMarathonBE.Models.UserFriend", b =>
+            modelBuilder.Entity("TypeRunnerBE.Models.UserFriend", b =>
                 {
-                    b.HasOne("TypeMarathonBE.Models.User", "FromUser")
+                    b.HasOne("TypeRunnerBE.Models.User", "FromUser")
                         .WithMany()
                         .HasForeignKey("FromUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TypeMarathonBE.Models.User", "ToUser")
+                    b.HasOne("TypeRunnerBE.Models.User", "ToUser")
                         .WithMany()
                         .HasForeignKey("ToUserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -216,9 +225,9 @@ namespace TypeRunnerBE.Migrations
                     b.Navigation("ToUser");
                 });
 
-            modelBuilder.Entity("TypeMarathonBE.Models.UserRaceMistake", b =>
+            modelBuilder.Entity("TypeRunnerBE.Models.UserRaceMistake", b =>
                 {
-                    b.HasOne("TypeMarathonBE.Models.UserRaceRecord", "UserRace")
+                    b.HasOne("TypeRunnerBE.Models.UserRaceRecord", "UserRace")
                         .WithMany("Mistakes")
                         .HasForeignKey("UserId", "RaceId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -227,15 +236,15 @@ namespace TypeRunnerBE.Migrations
                     b.Navigation("UserRace");
                 });
 
-            modelBuilder.Entity("TypeMarathonBE.Models.UserRaceRecord", b =>
+            modelBuilder.Entity("TypeRunnerBE.Models.UserRaceRecord", b =>
                 {
-                    b.HasOne("TypeMarathonBE.Models.Race", "Race")
+                    b.HasOne("TypeRunnerBE.Models.Race", "Race")
                         .WithMany("UserRecords")
                         .HasForeignKey("RaceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TypeMarathonBE.Models.User", "User")
+                    b.HasOne("TypeRunnerBE.Models.User", "User")
                         .WithMany("RaceRecords")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -246,24 +255,24 @@ namespace TypeRunnerBE.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("TypeMarathonBE.Models.Author", b =>
-                {
-                    b.Navigation("Quotes");
-                });
-
-            modelBuilder.Entity("TypeMarathonBE.Models.Race", b =>
+            modelBuilder.Entity("TypeRunnerBE.Models.Race", b =>
                 {
                     b.Navigation("Racers");
 
                     b.Navigation("UserRecords");
                 });
 
-            modelBuilder.Entity("TypeMarathonBE.Models.User", b =>
+            modelBuilder.Entity("TypeRunnerBE.Models.Source", b =>
+                {
+                    b.Navigation("Passages");
+                });
+
+            modelBuilder.Entity("TypeRunnerBE.Models.User", b =>
                 {
                     b.Navigation("RaceRecords");
                 });
 
-            modelBuilder.Entity("TypeMarathonBE.Models.UserRaceRecord", b =>
+            modelBuilder.Entity("TypeRunnerBE.Models.UserRaceRecord", b =>
                 {
                     b.Navigation("Mistakes");
                 });

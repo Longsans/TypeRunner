@@ -3,13 +3,13 @@ using TypeRunnerBE.Models;
 
 namespace TypeRunnerBE.Services.Data
 {
-    using UserCollectionDataResult = DataOpResult<IList<User>, UserDataOpError>;
-    using UserDataResult = DataOpResult<User, UserDataOpError>;
+    using UserCollectionDataResult = DataOpResult<IList<User>>;
+    using UserDataResult = DataOpResult<User>;
 
     public class EfcUsersService : IUsersService
     {
-        private readonly TypeMarathonContext _context;
-        public EfcUsersService(TypeMarathonContext context)
+        private readonly TypeRunnerContext _context;
+        public EfcUsersService(TypeRunnerContext context)
         {
             _context = context;
         }
@@ -44,7 +44,7 @@ namespace TypeRunnerBE.Services.Data
         public UserDataResult Create(User user)
         {
             if (!CheckUsernameAvailable(user.Username))
-                return UserDataResult.Err(UserDataOpError.UsernameTaken);
+                return UserDataResult.Err(DataOpError.UsernameTaken);
 
             _context.Users.Add(user);
             _context.SaveChanges();
@@ -54,14 +54,14 @@ namespace TypeRunnerBE.Services.Data
         public UserDataResult UpdateUsername(int id, string username)
         {
             if (string.IsNullOrWhiteSpace(username))
-                return UserDataResult.Err(UserDataOpError.InfoEmpty);
+                return UserDataResult.Err(DataOpError.InfoEmpty);
 
             if (!CheckUsernameAvailable(username))
-                return UserDataResult.Err(UserDataOpError.UsernameTaken);
+                return UserDataResult.Err(DataOpError.UsernameTaken);
 
             var user = GetById(id);
             if (user == null)
-                return UserDataResult.Err(UserDataOpError.IdNotExist);
+                return UserDataResult.Err(DataOpError.IdNotExist);
 
             user.Username = username;
             _context.SaveChanges();
@@ -71,11 +71,11 @@ namespace TypeRunnerBE.Services.Data
         public UserDataResult UpdatePassword(int id, string password)
         {
             if (string.IsNullOrWhiteSpace(password))
-                return UserDataResult.Err(UserDataOpError.InfoEmpty);
+                return UserDataResult.Err(DataOpError.InfoEmpty);
 
             var user = GetById(id);
             if (user == null)
-                return UserDataResult.Err(UserDataOpError.IdNotExist);
+                return UserDataResult.Err(DataOpError.IdNotExist);
 
             user.Password = password;
             _context.SaveChanges();
@@ -86,7 +86,7 @@ namespace TypeRunnerBE.Services.Data
         {
             var user = GetById(id);
             if (user == null)
-                return UserDataResult.Err(UserDataOpError.IdNotExist);
+                return UserDataResult.Err(DataOpError.IdNotExist);
 
             _context.Remove(user);
             _context.SaveChanges();
@@ -98,7 +98,7 @@ namespace TypeRunnerBE.Services.Data
         {
             var user = GetWithFriendEntities(id);
             if (user == null)
-                return UserCollectionDataResult.Err(UserDataOpError.IdNotExist);
+                return UserCollectionDataResult.Err(DataOpError.IdNotExist);
 
             var friends = GetFriends(user).ToList();
             return UserCollectionDataResult.Ok(friends);
@@ -108,7 +108,7 @@ namespace TypeRunnerBE.Services.Data
         {
             var user = GetWithFriendEntities(id);
             if (user == null)
-                return UserDataResult.Err(UserDataOpError.IdNotExist);
+                return UserDataResult.Err(DataOpError.IdNotExist);
 
             var friend = GetFriends(user).FirstOrDefault(x => x.Id == friendId);
             return UserDataResult.Ok(friend);
@@ -118,7 +118,7 @@ namespace TypeRunnerBE.Services.Data
         {
             var user = GetWithFriendEntities(id);
             if (user == null)
-                return UserDataResult.Err(UserDataOpError.IdNotExist);
+                return UserDataResult.Err(DataOpError.IdNotExist);
 
             var friend = GetFriends(user).FirstOrDefault(x => x.Username == friendUsername);
             return UserDataResult.Ok(friend);
@@ -128,17 +128,17 @@ namespace TypeRunnerBE.Services.Data
         {
             var user = GetWithFriendEntities(id);
             if (user == null)
-                return UserDataResult.Err(UserDataOpError.IdNotExist);
+                return UserDataResult.Err(DataOpError.IdNotExist);
             if (id == friendId)
-                return UserDataResult.Err(UserDataOpError.FriendIsSelf);
+                return UserDataResult.Err(DataOpError.FriendIsSelf);
 
             var friend = GetFriends(user).FirstOrDefault(f => f.Id == friendId);
             if (friend != null)
-                return UserDataResult.Err(UserDataOpError.FriendAlreadyAdded);
+                return UserDataResult.Err(DataOpError.FriendAlreadyAdded);
 
             friend = GetById(friendId);
             if (friend == null)
-                return UserDataResult.Err(UserDataOpError.FriendIdNotExist);
+                return UserDataResult.Err(DataOpError.FriendIdNotExist);
 
             user.FriendsTo.Add(friend);
             _context.SaveChanges();
@@ -149,7 +149,7 @@ namespace TypeRunnerBE.Services.Data
         {
             var user = GetWithFriendEntities(id);
             if (user == null)
-                return UserDataResult.Err(UserDataOpError.IdNotExist);
+                return UserDataResult.Err(DataOpError.IdNotExist);
 
             var friend = user.FriendsFrom.FirstOrDefault(f => f.Id == friendId);
             if (friend != null)
@@ -159,7 +159,7 @@ namespace TypeRunnerBE.Services.Data
                 friend = user.FriendsTo.FirstOrDefault(f => f.Id == friendId);
                 if (friend != null)
                     user.FriendsTo.Remove(friend);
-                else return UserDataResult.Err(UserDataOpError.FriendNotAdded);
+                else return UserDataResult.Err(DataOpError.FriendNotAdded);
             }
 
             _context.SaveChanges();

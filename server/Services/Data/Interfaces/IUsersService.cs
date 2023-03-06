@@ -2,8 +2,8 @@
 
 namespace TypeRunnerBE.Services.Data
 {
-    using UserCollectionDataResult = DataOpResult<IList<User>, UserDataOpError>;
-    using UserDataResult = DataOpResult<User, UserDataOpError>;
+    using UserDataResult = DataOpResult<User>;
+    using UserListDataResult = DataOpResult<IList<User>>;
 
     public interface IUsersService
     {
@@ -19,22 +19,10 @@ namespace TypeRunnerBE.Services.Data
         UserDataResult UpdatePassword(int id, string password);
         UserDataResult DeleteById(int id);
         // friends
-        UserCollectionDataResult GetFriendsById(int id);
+        UserListDataResult GetFriendsById(int id);
         UserDataResult GetFriendByIdAndFriendId(int id, int friendId);
         UserDataResult GetFriendByIdAndFriendUsername(int id, string friendUsername);
         UserDataResult AddFriendByIdAndFriendId(int id, int friendId);
         UserDataResult RemoveFriendByIdAndFriendId(int id, int friendId);
-    }
-
-    public enum UserDataOpError
-    {
-        None = 0,
-        IdNotExist,
-        UsernameTaken,
-        InfoEmpty,
-        FriendIdNotExist,
-        FriendAlreadyAdded,
-        FriendNotAdded,
-        FriendIsSelf,
     }
 }

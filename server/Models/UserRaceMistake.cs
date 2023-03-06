@@ -10,5 +10,8 @@ namespace TypeRunnerBE.Models
 
         [Required]
         public string Word { get; set; }
+
+        [Required]
+        public int NumberOfTimes { get; set; }
     }
 }

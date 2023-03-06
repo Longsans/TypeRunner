@@ -14,6 +14,9 @@ namespace TypeRunnerBE.Models
         public string Password { get; set; }
 
         [Required]
+        public int AverageWpm { get; set; }
+
+        [Required]
         public ICollection<User> FriendsFrom { get; set; }
 
         [Required]

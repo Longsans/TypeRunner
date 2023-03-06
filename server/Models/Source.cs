@@ -2,16 +2,15 @@
 
 namespace TypeRunnerBE.Models
 {
-    public class Quote
+    public class Source
     {
         [Key]
         public int Id { get; set; }
 
         [Required]
-        public string Text { get; set; }
+        public string Name { get; set; }
 
         [Required]
-        public Author Author { get; set; }
-        public int AuthorId { get; set; }
+        public ICollection<Passage> Passages { get; set; }
     }
 }

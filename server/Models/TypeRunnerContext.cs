@@ -2,9 +2,9 @@
 
 namespace TypeRunnerBE.Models
 {
-    public class TypeMarathonContext : DbContext
+    public class TypeRunnerContext : DbContext
     {
-        public TypeMarathonContext(DbContextOptions<TypeMarathonContext> options) : base(options) { }
+        public TypeRunnerContext(DbContextOptions<TypeRunnerContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -30,21 +30,25 @@ namespace TypeRunnerBE.Models
                 .HasForeignKey(u => u.CurrentRaceId)
                 .IsRequired(false);
 
-            // User-Race
+            // User-race records
             modelBuilder.Entity<UserRaceRecord>().HasKey(ur => new { ur.UserId, ur.RaceId });
 
-            // User-race mistakes
+            // Mistakes
             modelBuilder.Entity<UserRaceMistake>().HasKey(urm => new { urm.UserId, urm.RaceId, urm.Word });
             modelBuilder.Entity<UserRaceMistake>()
                 .HasOne(urm => urm.UserRace)
                 .WithMany(ur => ur.Mistakes)
                 .HasForeignKey(urm => new { urm.UserId, urm.RaceId });
+
+            // Author
+            modelBuilder.Entity<Source>().HasIndex(a => a.Name).IsUnique();
         }
 
         public DbSet<User> Users { get; set; }
         public DbSet<Race> Races { get; set; }
         public DbSet<UserRaceRecord> UserRaceRecords { get; set; }
-        public DbSet<Author> Authors { get; set; }
-        public DbSet<Quote> Quotes { get; set; }
+        public DbSet<UserRaceMistake> UserRaceMistakes { get; set; }
+        public DbSet<Source> Sources { get; set; }
+        public DbSet<Passage> Passages { get; set; }
     }
 }

@@ -10,7 +10,7 @@ using TypeRunnerBE.Models;
 
 namespace TypeRunnerBE.Migrations
 {
-    [DbContext(typeof(TypeMarathonContext))]
+    [DbContext(typeof(TypeRunnerContext))]
     [Migration("20230219165112_SelfRefManyOnUser")]
     partial class SelfRefManyOnUser
     {

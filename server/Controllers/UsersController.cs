@@ -46,11 +46,11 @@ namespace TypeRunnerBE.Controllers
             {
                 switch (result.Error)
                 {
-                    case UserDataOpError.InfoEmpty:
+                    case DataOpError.InfoEmpty:
                         return _usernameEmptyErr;
-                    case UserDataOpError.UsernameTaken:
+                    case DataOpError.UsernameTaken:
                         return _usernameTakenErr;
-                    case UserDataOpError.IdNotExist:
+                    case DataOpError.IdNotExist:
                         return _idNotExistErr;
                 }
             }
@@ -65,9 +65,9 @@ namespace TypeRunnerBE.Controllers
             {
                 switch (result.Error)
                 {
-                    case UserDataOpError.InfoEmpty:
+                    case DataOpError.InfoEmpty:
                         return _usernameEmptyErr;
-                    case UserDataOpError.IdNotExist:
+                    case DataOpError.IdNotExist:
                         return _idNotExistErr;
                 }
             }
@@ -91,13 +91,13 @@ namespace TypeRunnerBE.Controllers
             {
                 switch (result.Error)
                 {
-                    case UserDataOpError.IdNotExist:
+                    case DataOpError.IdNotExist:
                         return _idNotExistErr;
-                    case UserDataOpError.FriendIsSelf:
+                    case DataOpError.FriendIsSelf:
                         return _friendIsSelfErr;
-                    case UserDataOpError.FriendAlreadyAdded:
+                    case DataOpError.FriendAlreadyAdded:
                         return _friendAddedErr;
-                    case UserDataOpError.FriendIdNotExist:
+                    case DataOpError.FriendIdNotExist:
                         return _friendIdNotExistErr;
                 }
             }
@@ -112,9 +112,9 @@ namespace TypeRunnerBE.Controllers
             {
                 switch (result.Error)
                 {
-                    case UserDataOpError.IdNotExist:
+                    case DataOpError.IdNotExist:
                         return _idNotExistErr;
-                    case UserDataOpError.FriendNotAdded:
+                    case DataOpError.FriendNotAdded:
                         return _friendNotAddedErr;
                 }
             }
